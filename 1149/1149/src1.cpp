@@ -21,27 +21,15 @@ RGB거리에 사는 사람들은 집을 빨강, 초록, 파랑중에 하나로 칠하려고 한다.
 
 */
 
+#define MIN(a,b,c) ((a) < (c) ? ((a) < (b) ? (a) : (b)) : ((b) < (c) ? (b) : (c)))
+
 #include <iostream>
 using namespace std;
 
-int minIndex(int R, int G, int B) // 3개의 값 중 최솟값의 인덱스를 리턴
+int minIndex(int i0, int i1, int value0, int value1) // 2개의 값 중 최솟값의 인덱스를 리턴
 {
-    if(R < G)
-    {
-        if(R < B) return 0;
-        else return 2;
-    }
-    else
-    {
-        if(G < B) return 1;
-        else return 2;
-    }
-}
-
-int minIndex(int c0, int c1) // 2개의 값 중 최솟값의 인덱스를 리턴
-{
-    if(c0 < c1) return 0;
-    else return 1;
+    if(value0 < value1) return i0;
+    else return i1;
 }
 
 int main()
@@ -50,7 +38,6 @@ int main()
     int **costs; // 페인트칠 비용([0] = R, [1] = G, [2] = B
     int rgb; // 이전 인덱스에서 R, G, B 중 최솟값을 가졌던 RGB 기억(0, 1, 2 중 하나)
     int sum[3]; // 전체 비용의 합(첫째 집을 R, G, B 중 작은 두 개로 각각 칠했을 때의 합 구하기)
-    int case_[2]; // 첫 번째 집에서 R, G, B 중 작은 두 개의 경우 인덱스
 
     cin >> N; // 첫째 줄 입력 (집의 수)
 
@@ -61,31 +48,21 @@ int main()
     for(int i = 0; i < N*3; i++)    // 둘째 줄부터 비용 입력
         cin >> costs[i/3][i%3];
 
-    
-    case_[0] = minIndex(costs[0][0], costs[0][1], costs[0][2]);
-    case_[1] = ((case_[0] + 1) % 3) < ((case_[0] + 2) % 3) ? ((case_[0] + 1) % 3) : ((case_[0] + 2) % 3);
-
-    
     for(int i = 0; i < 3; i++)
     {
         sum[i] = 0; // 초기화
-
-        if((i != case_[0]) && (i != case_[1]))
-            continue;
 
         rgb = i;
         sum[i] += costs[0][rgb];
 
         for(int j = 1; j < N; j++)  // index = 1부터 N-1 까지 탐색
         {
-            rgb = minIndex(costs[j][(rgb + 1) % 3], costs[j][(rgb + 2) % 3]); // 이전 이웃에 칠해진 색상 제외, 2개 중 최소 색상
+            rgb = minIndex((rgb + 1) % 3, (rgb + 2) % 3, costs[j][(rgb + 1) % 3], costs[j][(rgb + 2) % 3]); // 이전 이웃에 칠해진 색상 제외, 2개 중 최소 색상
             sum[i] += costs[j][rgb];
         }
     }
 
-    cout << sum[minIndex(sum[case_[0]], sum[case_[1]])];
-
-    cout << endl << case_[0] << "|" << case_[1] << endl;
+    cout << MIN(sum[0], sum[1], sum[2]);
 
     return 0;
 }
