@@ -19,6 +19,10 @@
 
 */
 
+#include <iostream>
+#include <string>
+using namespace std;
+
 int fibonacci(int n)    // n번째 피보나치 수 리턴
 {
     if(n == 0) return 0;
@@ -31,20 +35,66 @@ int fibonacci(int n)    // n번째 피보나치 수 리턴
         fib[i % 2] = fib[0] + fib[1];   // n번째 피보나치 수 생성
         
         if(fib[i % 2] > 1000000)    // 1,000,000 이 넘어갈 경우 나머지로 환산
-            fib[i % 2] -= 1000000;
+            fib[i % 2] %= 1000000;
     }
 
     return fib[n % 2];
 }
 
-#include <iostream>
-using namespace std;
+/*
+    발견한 규칙성 : 
+    
+    fibonacci(N)에서 N에 해당하는 양의 정수에 대하여
+    1 ~ 999,999 사이의 어떤 정수를 A, 임의의 정수를 X라고 할 때,
+
+    fibonacci( X * 1,000,000 + A )의 값은 3개의 값이 순환하며 반복된다.
+
+    예를 들어, A가 고정된 상태에서
+               X가 0, 3, 6, ... , 3의 배수 일 때 모든 피보나치 값은 같으며
+    마찬가지로 X가 1, 4, 7, ... , 3의 배수 +1 일 때 모든 값은 같고,
+    마지막으로 X가 2, 5, 8, ... , 3의 배수 +1 일 때 모든 값은 같고
+    이 세가지 값은 반복된다.
+
+    구체적인 예를 들자면, N = 987,123의 값과 N = 3,987,123, ...,  N = (3의 배수),987,123 의 값은 같다.
+
+*/
 
 int main()
 {
-    int N;
+    int N1, N2; // N1 : 100만의 자리 수 이상, N2 100만 미만 (1~999,999)
+    int N;      // N1, N2를 이용해 N 분해한 뒤, 재결합
 
-    cin >> N;
+    /*  스트링 형태의 숫자값 */
+    string strN;    // 입력값
+    string strN1;   // N1 : 100만의 자리 수 이상
+    string strN2;   // N2 100만 미만 (1~999,999)
+
+    cin >> strN;
+
+    int length = (int)strN.length();
+
+    if(length > 6) // 100만 이상일 경우, 분리
+    {
+        strN1 = strN.substr(0, length - 6);
+        strN2 = strN.substr(length - 6, 6);
+    }
+    else // 100만 이하일 경우
+    {
+        strN1 = '0';
+        strN2 = strN;
+    }
+
+    N1 = 0; // 초깃값 설정
+
+    /*  3의 배수는 각 자리의 숫자를 모두 더해도 여전히 3으로 나눠진다는 성질을 이용한다.  */
+    for(int i = 0; i < (int)strN1.length(); i++)
+    {
+        N1 += (strN1[i] - '0'); // N1의 각 자리 숫자를 정수로 변환하여 더하기
+    }
+    N2 = stoi(strN2);   // N2를 정수로 변환
+
+    N = N1 * 1000000 + N2;  // N으로 재결합
+
     cout << fibonacci(N);
 
     return 0;
