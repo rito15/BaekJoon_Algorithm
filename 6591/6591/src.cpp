@@ -16,45 +16,52 @@
 */
 
 #include <iostream>
-#include <vector>
 using namespace std;
 
-/*
-int combination(int n, int r)
+typedef struct node
 {
-    double a = (double)n, b = (double)r;
-    double result = 1;
+    long data;
+    struct node* link;
+} node;
 
-    double i, j;
-    for (i = a, j = b; i > a - b; i--, j--)
-        result = result * i / j;
+typedef node* node_pointer;
 
-    return (int)result;
-}
-*/
 int main()
 {
-    int x = 1, y = 1, z;   // x -> a, y -> b, z -> res
-    vector<int> a, b, res;
+    int n = 1, r = 1;
+    long result;
+    
+    node_pointer head, tail;
+    tail = new node;
+    tail->link = NULL;
+    
+    head = tail;
 
-    while ((x != 0) || (y != 0))
+    while (true)
     {
-        cin >> x >> y;
-        if ((x == 0) && (y == 0)) break;
+        cin >> n >> r;
+        if ((n == 0) && (r == 0)) break;
 
-        a.push_back(x);
-        b.push_back(y);
+        if(n - r < r) r = n - r;
 
-        double a = (double)x, b = (double)y;
-        double result = 1;
+        result = 1;
+        for(int i = 1; i <= r; i++, n--)
+        {
+            result *= n;
+            result /= i;
+        }
+        
+        tail->link = new node;
 
-        double i, j;
-        for (i = a, j = b; i > a - b; i--, j--)
-            result = result * i / j;
-
-        res.push_back((int)result);
+        tail = tail->link;
+        tail->data = result;
+        tail->link = NULL;
     }
-
-    for (int i = 0; i < (int)res.size(); i++)
-        cout << res[i] << endl;
+    
+    head = head->link;
+    while(head)
+    {
+        cout << head->data << endl;
+        head = head->link;
+    }
 }
