@@ -19,6 +19,7 @@
 #include <vector>
 using namespace std;
 
+/*
 int combination(int n, int r)
 {
     double a = (double)n, b = (double)r;
@@ -30,7 +31,7 @@ int combination(int n, int r)
 
     return (int)result;
 }
-
+*/
 int main()
 {
     int x = 1, y = 1, z;   // x -> a, y -> b, z -> res
@@ -44,7 +45,14 @@ int main()
         a.push_back(x);
         b.push_back(y);
 
-        res.push_back(combination(x, y));
+        double a = (double)x, b = (double)y;
+        double result = 1;
+
+        double i, j;
+        for (i = a, j = b; i > a - b; i--, j--)
+            result = result * i / j;
+
+        res.push_back((int)result);
     }
 
     for (int i = 0; i < (int)res.size(); i++)
