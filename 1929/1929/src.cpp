@@ -13,30 +13,68 @@
 #include <iostream>
 using namespace std;
 
+// 1 - 미리 100만까지 소수를 모두 구해놓는 방식
+
 int main()
 {
     int M; // 하한
     int N; // 상한
-    int *numbers; // 1~N 범위의 자연수를 하나씩 갖는 정수 배열
+    bool *numbers; 
+
+    numbers = new bool[1000001];
+
+    for(int i = 0; i <= 1000000; i++)
+        numbers[i] = true;
+    numbers[1] = false;
+
+    for(int i = 2; i <= 1000000; i++)
+    {
+        for(int j = i*2; j <= 1000000; j += i)   // 에라토스테네스의 체
+        {
+            if(numbers[j] == true)
+                numbers[j] = false;
+        }
+    }
 
     cin >> M >> N;  // 입력
 
-    numbers = new int[N + 1];
-
-    for(int i = 0; i <= N; i++)   // numbers[x]에는 자연수 x를 담는다.
-        numbers[i] = i;
-
-    for(int i = 2; i <= N; i++)
+    for(int i = M; i <= N; i++)
     {
-        if(M <= i && i <= N && numbers[i] != 0)
-            cout << numbers[i] << endl;    // 출력
+        if (numbers[i] == true)
+            printf("%d\n", i);    // 출력 -> cout은 시간초과 뜸 ㅗ
+    }
 
-        for(int j = i*2; j <= N; j += i)   // 각 숫자의 배수는 모두 0으로 초기화
+    return 0;
+}
+
+/*  2 - 이것도 정답 : M, N을 모두 입력받은 뒤, N까지만 소수를 구하며 매 시행마다 즉각 소수를 출력하는 방식
+
+int main()
+{
+    int M; // 하한
+    int N; // 상한
+    bool *numbers;
+
+    cin >> M >> N;  // 입력
+
+    numbers = new bool[N + 1];
+
+    for (int i = 0; i <= N; i++)
+        numbers[i] = true;
+    numbers[1] = false;
+
+    for (int i = 2; i <= N; i++)
+    {
+        if (M <= i && numbers[i])
+            printf("%d\n", i);
+
+        for (int j = i * 2; j <= N; j += i)
         {
-            if(numbers[j] != 0)
-                numbers[j] = 0;
+            if (numbers[j])
+                numbers[j] = false;
         }
     }
 
     return 0;
 }
+*/
