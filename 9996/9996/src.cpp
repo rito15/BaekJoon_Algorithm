@@ -74,8 +74,21 @@ int main()
 
     for(i = 0; i < N; i++)
     {
-        // if((int)file[i].length() <= p1 || (int)file[i].length() <= p2)
-        // 이게 왜 틀리는데요 ㅗㅗ?
+        // if((int)file[i].length() <= p1 || (int)file[i].length() <= p2)   -> 틀림
+        //    result[i] = "NE";
+        /*
+            만약 패턴이 AB*BCD인 경우,
+            파일명이 ABCD이면 p1 = 2, p2 = 3, length = 4이므로
+
+            length가 p1, p2보다 크기 때문에 조건에 해당되지 않아 DA가 출력된다.
+
+            하지만 파일명 "ABCD"는 "AB"로 시작해서 "BCD"로 끝나는 패턴에 부합하지 않으므로
+            NE가 출력되어야 한다.
+
+            따라서 파일명은 시작패턴의 길이와 종료패턴의 길이 합을 최소 길이로 가져야만 한다.
+            length >= p1 + p2
+
+        */
 
         if((int)file[i].length() < p1 + p2)  // 예외처리(런타임 에러 발생 부분) - 이건 맞음
         {
@@ -90,7 +103,7 @@ int main()
     }
 
     for(i = 0; i < N; i++)
-        cout << result[i] << endl;      // 이게 왜틀리죠?
+        cout << result[i] << endl;
 
     return 0;   
 }   // 시불
