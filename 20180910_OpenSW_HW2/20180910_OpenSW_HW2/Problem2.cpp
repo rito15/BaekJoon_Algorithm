@@ -1,31 +1,31 @@
 /*
-row 0 1 2
-col0	O O O
-col1	O O O
-col2	O O O
+        col 0 1 2
+    row0	O O O
+    row1	O O O
+    row2	O O O
 */
 
 #include <iostream>
 using namespace std;
 
-int N;			// Array Size(Col, Row)
-int maxValue;	// what should be found out
+int N;			// Array Size(Row, Col)
+int maxValue;	// To be found out
 int **matrix;	// N * N matrix
 
 typedef struct area
 {
-    // (row1, col1) ~ (row2, col2)
-    int col1;
-    int col2;
+    // (col1, row1) ~ (col2, row2)
     int row1;
     int row2;
+    int col1;
+    int col2;
 
-    area(int col1, int col2, int row1, int row2)
+    area(int row1, int row2, int col1, int col2)
     {
-        this->col1 = col1;
-        this->col2 = col2;
         this->row1 = row1;
         this->row2 = row2;
+        this->col1 = col1;
+        this->col2 = col2;
     }
 } area;
 
@@ -34,8 +34,8 @@ int sumOfArea(area& ar)
 {
     int sum = 0;
 
-    for (int i = ar.col1; i <= ar.col2; i++)
-        for (int j = ar.row1; j <= ar.row2; j++)
+    for (int i = ar.row1; i <= ar.row2; i++)
+        for (int j = ar.col1; j <= ar.col2; j++)
             sum += matrix[i][j];
 
     return sum;
@@ -55,17 +55,17 @@ void findMax(area& maxArea, area ar1)
 {
     maxArea = max(maxArea, ar1);
 
-    if (ar1.col1 + 1 <= ar1.col2 && ar1.row1 <= ar1.row2)
-        findMax(maxArea, area(ar1.col1 + 1, ar1.col2, ar1.row1, ar1.row2));
+    if (ar1.row1 + 1 <= ar1.row2 && ar1.col1 <= ar1.col2)
+        findMax(maxArea, area(ar1.row1 + 1, ar1.row2, ar1.col1, ar1.col2));
 
-    if (ar1.col1 <= ar1.col2 - 1 && ar1.row1 <= ar1.row2)
-        findMax(maxArea, area(ar1.col1, ar1.col2 - 1, ar1.row1, ar1.row2));
+    if (ar1.row1 <= ar1.row2 - 1 && ar1.col1 <= ar1.col2)
+        findMax(maxArea, area(ar1.row1, ar1.row2 - 1, ar1.col1, ar1.col2));
 
-    if (ar1.col1 <= ar1.col2 && ar1.row1 + 1 <= ar1.row2)
-        findMax(maxArea, area(ar1.col1, ar1.col2, ar1.row1 + 1, ar1.row2));
+    if (ar1.row1 <= ar1.row2 && ar1.col1 + 1 <= ar1.col2)
+        findMax(maxArea, area(ar1.row1, ar1.row2, ar1.col1 + 1, ar1.col2));
 
-    if (ar1.col1 <= ar1.col2 && ar1.row1 <= ar1.row2 - 1)
-        findMax(maxArea, area(ar1.col1, ar1.col2, ar1.row1, ar1.row2 - 1));
+    if (ar1.row1 <= ar1.row2 && ar1.col1 <= ar1.col2 - 1)
+        findMax(maxArea, area(ar1.row1, ar1.row2, ar1.col1, ar1.col2 - 1));
 }
 
 int main()
@@ -90,8 +90,8 @@ int main()
 
     cout << "Max value = " << sumOfArea(maxArea) << ", ";
     cout << "Position = ";
-    cout << maxArea.row1 << "-" << maxArea.row2 << ", ";
-    cout << maxArea.col1 << "-" << maxArea.col2 << endl;
+    cout << maxArea.col1 << "-" << maxArea.col2 << ", ";
+    cout << maxArea.row1 << "-" << maxArea.row2 << endl;
 
     return 0;
 }

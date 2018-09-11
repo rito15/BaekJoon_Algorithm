@@ -163,7 +163,7 @@ void calculate_date(date& now, date& target, int& gap)
 int main()
 {
     date now;			// now
-    date target;		// 
+    date target;		// target date
     string dateTime;	// input date string
     int gap;			// target - now (days)
 
