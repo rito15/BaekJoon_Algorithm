@@ -27,5 +27,8 @@
     <ClCompile Include="Problem4.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Problem4_원본.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

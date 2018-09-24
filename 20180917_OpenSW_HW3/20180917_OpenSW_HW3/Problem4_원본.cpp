@@ -1,7 +1,24 @@
+// 디버그 코드를 제거하기 전, 이제 막 기능을 완성한 상태
+// 한번에 하나의 input -> 하나의 output만 가능한 상태
+
+// 무무형 제발 이건 좀
+
 #include <iostream>
 #include <string>
 #include <vector>
 #include <math.h>
+
+#define FOR(i, a)     for(int i = 0; i < a; i++)
+#define FOR_(i, a, b) for(int i = a; i <= b; i++)
+
+#define ENTER         std::cout << std::endl;
+
+bool debugFlag = true;
+
+#define DEBUG_OFF             debugFlag = false;
+#define DEBUG_                if(debugFlag)
+#define DEBUG_VAL(variable)   if(debugFlag) std::cout << "[DEBUG]_ " << ((void)variable, #variable) << " = " << variable << std::endl;
+
 
 int L;  // Original Message의 길이
 int N;  // Original Message에서 1의 개수
@@ -9,7 +26,6 @@ int M;  // Original Message에서 0의 개수 (L - N)
 int expansion; // 확장될 가능성 있는 최대 숫자 
                //(comp에서 a를  origin의 b로 확장할 경우 이 때 a의 십진수 값을 나타냄) 
 std::vector<std::string> originalStrings;   // 복원한 오리지널 메시지들
-std::vector<std::string> outputs;           // 출력할 output 메시지
 
 // 10진수 정수 -> 2진수 스트링
 std::string decToBin(int decimal);
@@ -27,62 +43,39 @@ void findExpansion(std::string compressedString, int pos);
 
 int main()
 {
-    int repeat; // case 수
-    std::cout << "Input the number of Cases = "; std::cin >> repeat;
-    std::cout << "=============================" << std::endl << std::endl;
-    std::cout << "(Sample input)" << std::endl;
+    bool uniqueness = false; // compd -> origin 유니크하게 가능한지 여부
 
-    for(int count = 0; count < repeat; count++)
-    {
-        originalStrings.clear();
+    std::string originalMessage;    // 원래 메시지
+    std::string compressedMessage;  // 압축된 메시지
 
-        std::string compressedMessage;  // 압축된 메시지
 
-        std::cin >> L >> N;
-        M = L - N;
+    std::cin >> L >> N;
+    M = L - N;
 
-        std::cin >> compressedMessage;
-    
-        int cL = 0;  // Compressed Message의 길이
-        int cN = 0;  // Compressed Message에서 1의 개수
-        int cM = 0;  // Compressed Message에서 0의 개수 (cL - cN)
+    std::cin >> compressedMessage; ENTER;
 
-        for(int i = 0; i < (int)compressedMessage.length(); i++)
-            if (compressedMessage[i] == '1')
-                cN++;   // comp에서 1의 개수
+    /*
+    L = 9; N = 7; M = L - N;
+    compressedMessage = "1010101";
+    */
 
-        cL = (int)compressedMessage.length();    // comp의 길이
-        cM = cL - cN;                           // comp에서 0의 개수
+    int cL = 0;  // Compressed Message의 길이
+    int cN = 0;  // Compressed Message에서 1의 개수
+    int cM = 0;  // Compressed Message에서 0의 개수 (cL - cN)
 
-        expansion = (N - cN) * (int)pow(2.0, (double)(cM - M));
+    FOR(i, (int)compressedMessage.length())  // comp에서 1의 개수
+        if (compressedMessage[i] == '1')
+            cN++;
 
-        // 상위 함수 호출
-        findOrigin(compressedMessage, 0);
+    cL = (int)compressedMessage.length();    // comp의 길이
+    cM = cL - cN;                           // comp에서 0의 개수
 
-        // output 스트링들 저장
-        switch((int)originalStrings.size())
-        {
-        case 0:
-            outputs.push_back("NO");
-            break;
+    expansion = (N - cN) * (int)pow(2.0, (double)(cM - M));
 
-        case 1:
-            outputs.push_back("YES");
-            break;
+    findOrigin(compressedMessage, 0);
 
-        default:
-            outputs.push_back("NOT UNIQUE");
-            break;
-        }
-
-        //for (int i = 0; i < (int)originalStrings.size(); i++)
-            //std::cout << "Decompression 결과[" << i + 1 << "] : " << originalStrings[i] << std::endl;
-    }
-
-    std::cout << std::endl << "(Sample output)" << std::endl;
-
-    for(int i = 0; i < (int)outputs.size(); i++)
-        std::cout << "Case " << i + 1 << " : " << outputs[i] << std::endl;
+    for (int i = 0; i < (int)originalStrings.size(); i++)
+        std::cout << "오예 " << originalStrings[i] << std::endl;
 
     return 0;
 }
@@ -141,15 +134,18 @@ void findOrigin(std::string compressedString, int pos)
     int cN = 0;  // Compressed Message에서 1의 개수
     int cM = 0;  // Compressed Message에서 0의 개수 (cL - cN)
 
-    for (int i = 0; i < (int)compressedString.length(); i++)
+    FOR(i, (int)compressedString.length())  // comp에서 1의 개수
         if (compressedString[i] == '1')
-            cN++;   // comp에서 1의 개수
+            cN++;
 
     cL = (int)compressedString.length();    // comp의 길이
     cM = cL - cN;                           // comp에서 0의 개수
 
-    if (L == cL && N == cN)  // 성공적으로 복원 시 벡터에 저장
+    if (L == cL && N == cN)  // 성공적으로 복원 시
     {
+        DEBUG_
+            std::cout << "시발 나는 이걸 저장할꺼야 =  " << compressedString << std::endl << std::endl;
+
         originalStrings.push_back(compressedString);
         return;
     }
@@ -157,9 +153,14 @@ void findOrigin(std::string compressedString, int pos)
     if (L < cL || N < cN || M > cM)  // 종료 조건
         return;
 
-    // 하위 함수 호출
+
     for (int i = pos; i < (int)compressedString.length(); i++)
     {
+        DEBUG_
+            std::cout << " 여기 i 값 =  " << i << std::endl;
+        DEBUG_
+            std::cout << " 스트링 =  " << compressedString << std::endl << std::endl;
+
         findExpansion(compressedString, i);
     }
 }
@@ -170,9 +171,9 @@ void findExpansion(std::string compressedString, int pos)
     int cN = 0;  // Compressed Message에서 1의 개수
     int cM = 0;  // Compressed Message에서 0의 개수 (cL - cN)
 
-    for(int i = 0; i < (int)compressedString.length(); i++)
+    FOR(i, (int)compressedString.length())  // comp에서 1의 개수
         if (compressedString[i] == '1')
-            cN++;   // comp에서 1의 개수
+            cN++;
 
     cL = (int)compressedString.length();    // comp의 길이
     cM = cL - cN;                           // comp에서 0의 개수
@@ -196,9 +197,18 @@ void findExpansion(std::string compressedString, int pos)
 
             expand(compressedString, expanStr, pos);    // 확장
 
-            findOrigin(compressedString, pos + nowExpansion + 1);   // 분기 시작 (상위 함수 호출)
+            DEBUG_
+                std::cout << " ㅎㅇㅎㅇ : " << compressedString << " 그리고 ~ " << expanStr << std::endl;
+            DEBUG_
+                std::cout << " 새로운 숫자 =  " << pos + nowExpansion + 1 << std::endl;
+            
+            //system("pause > nul");
+            system(("timeout /t " + std::to_string(0) + " > nul").c_str());
+            //system("cls");
 
-            compressedString = tmpStr; // 스트링 복원 후 for 문 다음 진행
+            findOrigin(compressedString, pos + nowExpansion + 1);   // 분기 시작
+
+            compressedString = tmpStr;
         }
     }
 }
